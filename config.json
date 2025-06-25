@@ -1,0 +1,56 @@
+{
+  "databaseConfig": {
+    "databaseType": 1,
+    "databaseName": "fastapi_base_server",
+    "connectionString": "",
+    "awsRoleArn": "",
+    "awsRoleName": "",
+    "awsAccessKeyId": "",
+    "awsSecretAccessKey": "",
+    "firestoreProductId": "your-project-id",
+    "firestorePrivateKey": "your-private-key",
+    "tables": [
+      {
+        "tableName": "users",
+        "pkName": "user_id"
+      },
+      {
+        "tableName": "accounts",
+        "pkName": "account_id"
+      },
+      {
+        "tableName": "categories",
+        "pkName": "category_id"
+      }
+    ]
+  },
+  "cacheConfig": {
+    "host": "localhost",
+    "port": 6379,
+    "sessionExpireTime": 3600
+  },
+  "eventConfig": {
+    "enabled": true,
+    "eventQueue": "events"
+  },
+  "messageQueueConfig": {
+    "host": "localhost",
+    "port": 5672,
+    "username": "guest",
+    "password": "guest"
+  },
+  "billingConfig": {
+    "enabled": false,
+    "provider": "none"
+  },
+  "templateConfig": {
+    "gameId": "fastapi-base-server",
+    "env": "development",
+    "localPath": "./data",
+    "bucketEnv": "dev",
+    "bucketUrl": "https://s3.amazonaws.com",
+    "bucketName": "fastapi-base-server-bucket",
+    "awsAccessKeyId": "",
+    "awsSecretAccessKey": ""
+  }
+} 

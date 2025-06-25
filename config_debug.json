@@ -1,0 +1,56 @@
+{
+  "databaseConfig": {
+    "databaseType": 1,
+    "databaseName": "fastapi_base_server_debug",
+    "connectionString": "",
+    "awsRoleArn": "",
+    "awsRoleName": "",
+    "awsAccessKeyId": "",
+    "awsSecretAccessKey": "",
+    "firestoreProductId": "debug-project-id",
+    "firestorePrivateKey": "debug-private-key",
+    "tables": [
+      {
+        "tableName": "debug_users",
+        "pkName": "user_id"
+      },
+      {
+        "tableName": "debug_accounts",
+        "pkName": "account_id"
+      },
+      {
+        "tableName": "debug_categories",
+        "pkName": "category_id"
+      }
+    ]
+  },
+  "cacheConfig": {
+    "host": "localhost",
+    "port": 6379,
+    "sessionExpireTime": 1800
+  },
+  "eventConfig": {
+    "enabled": false,
+    "eventQueue": "debug_events"
+  },
+  "messageQueueConfig": {
+    "host": "localhost",
+    "port": 5672,
+    "username": "guest",
+    "password": "guest"
+  },
+  "billingConfig": {
+    "enabled": false,
+    "provider": "none"
+  },
+  "templateConfig": {
+    "gameId": "fastapi-base-server-debug",
+    "env": "debug",
+    "localPath": "./debug_data",
+    "bucketEnv": "debug",
+    "bucketUrl": "https://s3.amazonaws.com",
+    "bucketName": "fastapi-base-server-debug-bucket",
+    "awsAccessKeyId": "",
+    "awsSecretAccessKey": ""
+  }
+} 
