@@ -43,4 +43,16 @@ async def check_session_info(access_token: str) -> SessionInfo | None:
     await r.expire(f"sessionInfo:{access_token}", SESSION_EXPIRE_MINUTES*60)
     if session_info.session_state != ClientSessionState.NONE:
         return None
-    return session_info 
+    return session_info
+
+async def save_chat_history(user_id: str, room_id: str, message: dict):
+    _check_init()
+    key = f"chat_history:{user_id}:{room_id}"
+    await r.rpush(key, json.dumps(message))
+    await r.ltrim(key, -50, -1)
+
+async def load_chat_history(user_id: str, room_id: str, limit: int = 20):
+    _check_init()
+    key = f"chat_history:{user_id}:{room_id}"
+    history = await r.lrange(key, -limit, -1)
+    return [json.loads(m) for m in history] 

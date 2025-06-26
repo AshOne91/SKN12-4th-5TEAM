@@ -9,11 +9,19 @@ from template.chatbot.common.chatbot_model import ChatbotRoomInfo, ChatbotMessag
 import uuid
 from datetime import datetime
 import json
-from service.cache.async_session import r, _check_init
+from service.cache.async_session import save_chat_history, load_chat_history
 import openai
+from template.category.common.category_serialize import CategoryAskRequest, CategoryAskResponse
+from dotenv import load_dotenv
+
+import os
+print("OPENAI_API_KEY:", os.getenv("OPENAI_API_KEY"))
 
 # openai.AsyncOpenAI 인스턴스 생성
 openai_client = openai.AsyncOpenAI()
+
+# Load environment variables from .env file
+load_dotenv()
 
 class ChatbotTemplateImpl(ChatbotTemplate):
     def init(self, config):
@@ -91,44 +99,48 @@ class ChatbotTemplateImpl(ChatbotTemplate):
 
         # 2. 사용자 메시지를 Redis 히스토리에 저장
         user_message = {
-            "type": "user",
+            "role": "user",
             "content": message,
             "timestamp": datetime.now().isoformat()
         }
-        await self.save_chat_history(user_id, room_id, user_message)
+        await save_chat_history(user_id, room_id, user_message)
 
         # 3. 기존 히스토리 로드
-        history = await self.load_chat_history(user_id, room_id, limit=10)
+        history = await load_chat_history(user_id, room_id, limit=10)
 
         # 4. 카테고리 서버에 질의 (질문, 히스토리 등 전달)
         try:
+            category_req = CategoryAskRequest(question=message)
             resp = await http_client.post(
-                f"{category_server_url}/classify",
-                json={"text": message}
+                f"{category_server_url}/ask",
+                json=category_req.model_dump()
             )
             resp.raise_for_status()
-            category_resp = await resp.json()
-            category = category_resp.get("category")
-            draft_answer = category_resp.get("draft_answer")
+            category_resp_json = await resp.json()
+            category_answer = category_resp_json.get("answer", "")
         except Exception as e:
             print(f"카테고리 서버 질의 실패: {e}")
-            category = "general"
-            draft_answer = None
+            category_answer = ""
 
         # 5. 최종 LLM 호출 (질문, draft_answer, 히스토리)
-        final_answer = await self.call_final_llm(message, draft_answer or "", history)
+        final_answer = await self.call_final_llm(message, category_answer, history)
 
         # 6. 챗봇 응답을 Redis 히스토리에 저장
         bot_message = {
-            "type": "bot",
+            "role": "bot",
             "content": final_answer,
             "timestamp": datetime.now().isoformat()
         }
-        await self.save_chat_history(user_id, room_id, bot_message)
+        await save_chat_history(user_id, room_id, bot_message)
 
         # 7. 최신 히스토리 반환
-        updated_history = await self.load_chat_history(user_id, room_id, limit=20)
-        return ChatbotMessageResponse(answer=final_answer, history=updated_history)
+        updated_history = await load_chat_history(user_id, room_id, limit=20)
+        # 각 dict가 반드시 role, content 키를 갖도록 변환
+        history_items = [
+            {"role": item.get("role", ""), "content": item.get("content", "")}
+            for item in updated_history
+        ]
+        return ChatbotMessageResponse(answer=final_answer, history=history_items)
 
     async def on_chatbot_history_req(self, client_session, request: ChatbotHistoryRequest, app) -> ChatbotHistoryResponse:
         """채팅 히스토리 조회"""
@@ -147,16 +159,14 @@ class ChatbotTemplateImpl(ChatbotTemplate):
 
         # 2. Redis에서 히스토리 조회 (기본 50개)
         try:
-            history = await self.load_chat_history(user_id, room_id, limit=50)
-            
+            history = await load_chat_history(user_id, room_id, limit=50)
             # ChatbotMessageHistoryItem 형태로 변환
             history_items = []
             for item in history:
                 history_items.append(ChatbotMessageHistoryItem(
-                    role=item["type"],  # type을 role로 매핑
-                    content=item["content"]
+                    role=item.get("role", ""),
+                    content=item.get("content", "")
                 ))
-            
             return ChatbotHistoryResponse(history=history_items)
         except Exception as e:
             print(f"히스토리 조회 실패: {e}")
@@ -168,7 +178,7 @@ class ChatbotTemplateImpl(ChatbotTemplate):
         context = ""
         if history:
             recent_messages = history[-5:]
-            context = " ".join([msg["content"] for msg in recent_messages if msg["type"] == "user"])
+            context = " ".join([msg["content"] for msg in recent_messages if msg.get("role") == "user"])
 
         # 프롬프트 구성
         prompt = f"""
@@ -195,20 +205,3 @@ class ChatbotTemplateImpl(ChatbotTemplate):
             max_tokens=512
         )
         return response.choices[0].message.content or ""
-
-    async def save_chat_history(self, user_id: str, room_id: str, message: dict):
-        """Redis에 채팅 히스토리 저장"""
-        if r is None:
-            raise RuntimeError("Redis 클라이언트(r)가 초기화되지 않았습니다.")
-        key = f"chat_history:{user_id}:{room_id}"
-        await r.rpush(key, json.dumps(message))
-        # 최대 50개 메시지 유지
-        await r.ltrim(key, -50, -1)
-
-    async def load_chat_history(self, user_id: str, room_id: str, limit: int = 20):
-        """Redis에서 채팅 히스토리 조회"""
-        if r is None:
-            raise RuntimeError("Redis 클라이언트(r)가 초기화되지 않았습니다.")
-        key = f"chat_history:{user_id}:{room_id}"
-        history = await r.lrange(key, -limit, -1)
-        return [json.loads(m) for m in history] 
