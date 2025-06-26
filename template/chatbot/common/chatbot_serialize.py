@@ -2,12 +2,12 @@ from typing import List, Optional
 from service.net.protocol_base import BaseRequest, BaseResponse
 from template.chatbot.common.chatbot_model import *
 
-# 챗봇 질의
-class ChatbotAskRequest(BaseRequest):
-    question: str
+# # 챗봇 질의
+# class ChatbotAskRequest(BaseRequest):
+#     question: str
 
-class ChatbotAskResponse(BaseResponse):
-    answer: str
+# class ChatbotAskResponse(BaseResponse):
+#     answer: str
 
 # 채팅방 목록
 class ChatbotRoomsRequest(BaseRequest):
