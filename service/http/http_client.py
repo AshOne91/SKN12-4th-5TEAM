@@ -18,4 +18,4 @@ class HTTPClientPool:
         return response
 
     async def close(self):
-        await self.client.aclose() 
+        await self.client.aclose()

@@ -19,4 +19,5 @@ class SessionInfo:
     app_version: str = ""
     os: str = ""
     country: str = ""
-    session_state: ClientSessionState = ClientSessionState.NONE 
+    session_state: ClientSessionState = ClientSessionState.NONE
+    shard_id: int = -1 
