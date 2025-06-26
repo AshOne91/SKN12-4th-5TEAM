@@ -7,6 +7,8 @@ from template.drug.common.drug_serialize import (
 
 router = APIRouter()
 
+
+
 @router.post("/ask", response_model=DrugAskResponse)
 async def drug_ask(request: DrugAskRequest):
     drug_template = TemplateContext.get_template(TemplateType.DRUG)

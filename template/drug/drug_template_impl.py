@@ -43,4 +43,4 @@ class DrugTemplateImpl(DrugTemplate):
         # 답변 생성
         answer = vs.rag_answer(question)
         response = DrugAskResponse(answer=answer)
-        return response 
+        return response
