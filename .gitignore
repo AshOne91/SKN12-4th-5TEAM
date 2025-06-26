@@ -1,0 +1,9 @@
+.env
+__pycache__
+*QA_random_pair*
+*pilsu_pro*
+categories.pkl
+embeddings.pt
+texts.pkl
+index.faiss
+index.pkl
