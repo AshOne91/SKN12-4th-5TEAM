@@ -31,9 +31,13 @@ async def lifespan(app: FastAPI):
         host="localhost", port=3306, user="root", password="Wkdwkrdhkd91!", db="medichain_global"
     )
 
+    # pool이 정상적으로 생성됐는지 확인
+    if not app.state.globaldb.pool:
+        raise RuntimeError("글로벌 DB pool 생성 실패")
+
     # 샤드 DB 풀 초기화 (글로벌 DB에서 shard_info 읽어서 동적으로 생성)
     app.state.userdb_pools = {}
-    async with app. state.globaldb.acquire() as conn:
+    async with app.state.globaldb.pool.acquire() as conn:
         async with conn.cursor() as cur:
             await cur.execute("SELECT shard_id, host, port, database_name, username, password FROM shard_info WHERE is_active=1")
             rows = await cur.fetchall()
@@ -47,6 +51,10 @@ async def lifespan(app: FastAPI):
 
     # HTTPClientPool 초기화
     app.state.http_client = HTTPClientPool()
+    
+    # 카테고리 서버 URL 설정
+    app.state.category_server_url = config.get("categoryServerUrl", "http://localhost:8001")
+    
     yield
     # (필요시 종료 코드)
 

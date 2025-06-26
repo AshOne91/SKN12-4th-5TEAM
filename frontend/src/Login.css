@@ -1,0 +1,126 @@
+.login-bg {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #3a8dde 0%, #6fd6ff 100%);
+  }
+  
+  .login-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 2rem;
+    box-shadow: 0 8px 32px 0 rgba(58, 141, 222, 0.2);
+    padding: 2.5rem 2rem 2rem 2rem;
+    width: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .login-card h2 {
+    color: #3a8dde;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  
+  .login-card input[type="text"],
+  .login-card input[type="password"] {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    margin-bottom: 1rem;
+    border: none;
+    border-radius: 1.2rem;
+    background: #f0f7ff;
+    box-shadow: 0 2px 8px rgba(58, 141, 222, 0.07);
+    font-size: 1rem;
+    outline: none;
+    transition: box-shadow 0.2s;
+  }
+  
+  .login-card input:focus {
+    box-shadow: 0 0 0 2px #3a8dde33;
+  }
+  
+  .login-options {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.2rem;
+  }
+  
+  .login-options label {
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    color: #3a8dde;
+  }
+  
+  .login-options input[type="checkbox"] {
+    accent-color: #3a8dde;
+    margin-right: 0.5rem;
+  }
+  
+  .login-btn {
+    width: 100%;
+    padding: 0.9rem 0;
+    border: none;
+    border-radius: 1.2rem;
+    background: linear-gradient(90deg, #3a8dde 0%, #6fd6ff 100%);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(58, 141, 222, 0.13);
+    transition: background 0.2s;
+  }
+  
+  .login-btn:hover {
+    background: linear-gradient(90deg, #357ac9 0%, #4fc3f7 100%);
+  }
+  
+  .social-login {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1.2rem;
+  }
+  
+  .social-login span {
+    color: #3a8dde;
+    font-size: 0.95rem;
+  }
+  
+  .social-icons {
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: #f0f7ff;
+    box-shadow: 0 2px 8px rgba(58, 141, 222, 0.07);
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .icon.google { background: url('https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg') center/60% no-repeat, #f0f7ff; }
+  .icon.facebook { background: url('https://cdn.jsdelivr.net/gh/devicons/devicon/icons/facebook/facebook-original.svg') center/60% no-repeat, #f0f7ff; }
+  .icon.kakao { background: url('https://cdn.jsdelivr.net/gh/devicons/devicon/icons/twitter/twitter-original.svg') center/60% no-repeat, #f0f7ff; }
+  
+  .forgot {
+    color: #3a8dde;
+    font-size: 0.95rem;
+    text-decoration: underline;
+    margin-top: 0.5rem;
+    display: block;
+  }
