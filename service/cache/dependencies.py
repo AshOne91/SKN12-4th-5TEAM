@@ -1,12 +1,14 @@
-from fastapi import Request
+from fastapi import Request, HTTPException
 from service.cache.async_session import check_session_info
 from service.net.protocol_base import BaseResponse
 
 async def require_session(request: Request):
-    access_token = request.headers.get("Authorization")
+    # JSON body에서 accessToken 읽기
+    body = await request.json()
+    access_token = body.get("accessToken")
     if not access_token:
-        return BaseResponse(errorCode=401)
+        raise HTTPException(status_code=401, detail="Unauthorized")
     session_info = await check_session_info(access_token)
     if not session_info:
-        return BaseResponse(errorCode=401)
+        raise HTTPException(status_code=401, detail="Unauthorized")
     return session_info 
