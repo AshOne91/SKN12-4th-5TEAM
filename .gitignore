@@ -1,2 +1,47 @@
 .env
 __pycache__/
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# 가상환경
+env/
+venv/
+.venv/
+ENV/
+
+# 환경설정/보안
+*.env
+.env.*
+config_debug.json
+
+# DB/테스트 데이터
+*.sqlite3
+db.sqlite3
+
+# 빌드/배포
+dist/
+build/
+*.egg-info/
+
+# 로그/기타
+*.log
+*.bak
+*.tmp
+
+# IDE/에디터/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Frontend(하위폴더까지)
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+
+# 기타
+*.swp

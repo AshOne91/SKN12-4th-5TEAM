@@ -29,6 +29,7 @@
     "port": 6379,
     "sessionExpireTime": 3600
   },
+  "categoryServerUrl": "http://localhost:8001",
   "eventConfig": {
     "enabled": true,
     "eventQueue": "events"

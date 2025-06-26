@@ -1,0 +1,45 @@
+.landing-background {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .background-video {
+    position: absolute;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.6; /* 필요에 따라 조절 */
+  }
+  
+  .landing-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: #222;
+  }
+  
+  .landing-content h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+  }
+  
+  .start-btn {
+    background: #3182f6;
+    color: #fff;
+    border: none;
+    border-radius: 2rem;
+    padding: 1rem 2.5rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .start-btn:hover {
+    background: #2563eb;
+  }
