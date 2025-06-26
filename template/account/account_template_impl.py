@@ -80,19 +80,21 @@ class AccountTemplateImpl(AccountTemplate):
         shard_count = len(app.state.userdb_pools)
 
         # 3. 회원가입(샤드 할당, RegisterUser 프로시저 사용)
-        # call_procedure는 DictCursor로 반환하므로 OUT 파라미터는 별도 SELECT 필요
-        await mysql_global.execute(
-            "CALL RegisterUser(%s, %s, %s, %s, %s, @user_id, @shard_id)",
-            (request.id, "", password_hash, salt, shard_count)
-        )
-        out_rows = await mysql_global.execute("SELECT @user_id as user_id, @shard_id as shard_id")
-        if not out_rows or not out_rows[0]["user_id"]:
-            return AccountSignupResponse(errorCode=500, message="회원가입 실패")
-        user_id, shard_id = out_rows[0]["user_id"], out_rows[0]["shard_id"]
+        # 프로시저 호출 (올바른 방법)
+        result = await mysql_global.call_procedure("RegisterUser", 
+                                                  (request.id, "", password_hash, salt, shard_count))
 
-        # 4. 세션 발급(로그인과 동일)
-        access_token = str(uuid.uuid4())
-        session_info = SessionInfo(user_id=user_id, session_state=ClientSessionState.NONE, shard_id=shard_id)
-        await set_session_info(access_token, session_info)
-
-        return AccountSignupResponse(errorCode=0, message=access_token) 
+        # result에서 직접 user_id, shard_id 추출
+        if result and len(result) > 0:
+            user_id = result[0]["user_id"]
+            shard_id = result[0]["shard_id"]
+            print(f"회원가입 성공: {user_id}, {shard_id}")
+            # 4. 세션 발급(로그인과 동일)
+            access_token = str(uuid.uuid4())
+            session_info = SessionInfo(user_id=user_id, session_state=ClientSessionState.NONE, shard_id=shard_id)
+            await set_session_info(access_token, session_info)
+            
+            return AccountSignupResponse(errorCode=0, message=access_token)
+        else:
+            print(f"회원가입 실패: {result}")
+            return AccountSignupResponse(errorCode=500, message="회원가입 실패") 

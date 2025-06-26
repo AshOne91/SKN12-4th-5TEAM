@@ -106,8 +106,9 @@ function ChatbotPage() {
   const [isBotTyping, setIsBotTyping] = useState(false); // 봇 응답 대기 상태
   const [error, setError] = useState(null); // 에러 상태
 
-  // 백엔드 API 기본 URL
   const API_BASE_URL = "http://localhost:8000/chatbot";
+  const SEQUENCE = 0;
+  const getAccessToken = () => localStorage.getItem("accessToken") || "";
 
   // 1. 컴포넌트가 처음 렌더링될 때 채팅방 목록을 가져옵니다.
   useEffect(() => {
@@ -115,11 +116,13 @@ function ChatbotPage() {
       setIsLoadingRooms(true);
       setError(null);
       try {
-        // ChatbotRoomsRequest는 POST 요청이므로 body를 포함
         const res = await fetch(`${API_BASE_URL}/rooms`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({}), // 빈 객체라도 body가 필요
+          body: JSON.stringify({
+            accessToken: getAccessToken(),
+            sequence: SEQUENCE
+          }),
         });
         if (!res.ok) throw new Error("채팅방 목록을 불러오는 데 실패했습니다.");
         
@@ -134,6 +137,7 @@ function ChatbotPage() {
       } catch (err) {
         setError(err.message);
         console.error(err);
+        setChats([]);
       } finally {
         setIsLoadingRooms(false);
       }
@@ -152,11 +156,14 @@ function ChatbotPage() {
       setIsLoadingHistory(true);
       setError(null);
       try {
-        // ChatbotHistoryRequest는 POST 요청이므로 roomId를 body에 포함
         const res = await fetch(`${API_BASE_URL}/history`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ roomId: selectedChatId }),
+          body: JSON.stringify({
+            accessToken: getAccessToken(),
+            sequence: SEQUENCE,
+            roomId: selectedChatId
+          }),
         });
         if (!res.ok) throw new Error("대화 내역을 불러오는 데 실패했습니다.");
         
@@ -178,7 +185,15 @@ function ChatbotPage() {
   const handleNewChat = async () => {
     setError(null);
     try {
-      const res = await fetch(`${API_BASE_URL}/room/new`, { method: "POST" });
+      const res = await fetch(`${API_BASE_URL}/room/new`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          accessToken: getAccessToken(),
+          sequence: SEQUENCE,
+          title: `새 채팅방 ${chats.length + 1}`
+        }),
+      });
       if (!res.ok) throw new Error("새 채팅방 생성에 실패했습니다.");
       
       const data = await res.json(); // ChatbotRoomNewResponse (roomId 필드 포함)
@@ -209,7 +224,12 @@ function ChatbotPage() {
       const res = await fetch(`${API_BASE_URL}/message`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ roomId: selectedChatId, message: messageText }),
+        body: JSON.stringify({
+          accessToken: getAccessToken(),
+          sequence: SEQUENCE,
+          roomId: selectedChatId,
+          message: messageText
+        }),
       });
 
       if (!res.ok) throw new Error("메시지 전송에 실패했습니다.");

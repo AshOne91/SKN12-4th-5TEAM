@@ -9,10 +9,15 @@ from template.account.account_template_impl import AccountTemplateImpl
 from template.chatbot.chatbot_template_impl import ChatbotTemplateImpl
 
 import json
+import os
+from dotenv import load_dotenv
 from service.cache.cache_config import CacheConfig
 from service.cache.async_session import init_cache
 from service.db.database import MySQLPool
 from service.http.http_client import HTTPClientPool
+
+# Load environment variables
+load_dotenv()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -21,16 +26,23 @@ async def lifespan(app: FastAPI):
     TemplateContext.add_template(TemplateType.CHATBOT, ChatbotTemplateImpl())
 
     # 캐시(Redis) 초기화
-    with open("config.json") as f:
-        config = json.load(f)
-    cache_config = CacheConfig(**config["cacheConfig"])
+    cache_config = CacheConfig(
+        host=os.getenv("REDIS_HOST", "localhost"),
+        port=int(os.getenv("REDIS_PORT", 6379)),
+        session_expire_time=int(os.getenv("REDIS_SESSION_EXPIRE", 3600))
+    )
     init_cache(cache_config)
 
     # 글로벌 DB 풀 초기화
     app.state.globaldb = MySQLPool()
     await app.state.globaldb.init(
-        host="localhost", port=3306, user="root", password="Wkdwkrdhkd91!", db="medichain_global"
+        host=os.getenv("DB_HOST", "localhost"),
+        port=int(os.getenv("DB_PORT", 3306)),
+        user=os.getenv("DB_USER", "root"),
+        password=os.getenv("DB_PASSWORD", ""),
+        db=os.getenv("DB_NAME", "medichain_global")
     )
+    print(os.getenv("DB_HOST", "localhost"), os.getenv("DB_PORT", 3306), os.getenv("DB_USER", "root"), os.getenv("DB_PASSWORD", ""), os.getenv("DB_NAME", "medichain_global"))
 
     # pool이 정상적으로 생성됐는지 확인
     if not app.state.globaldb.pool:
@@ -54,7 +66,7 @@ async def lifespan(app: FastAPI):
     app.state.http_client = HTTPClientPool()
     
     # 카테고리 서버 URL 설정
-    app.state.category_server_url = config.get("categoryServerUrl", "http://localhost:8001")
+    app.state.category_server_url = os.getenv("CATEGORY_SERVER_URL", "http://localhost:8001")
     
     yield
     # (필요시 종료 코드)
@@ -62,13 +74,12 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 # --- CORS 미들웨어 추가 ---
-# React 앱(http://localhost:3000)과 같은 다른 도메인에서의 요청을 허용합니다.
-origins = [
-    "http://localhost:3000",
-]
+# 환경변수에서 허용할 도메인 목록을 가져옴
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    # allow_origins=allowed_origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

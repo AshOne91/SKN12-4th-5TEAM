@@ -124,3 +124,13 @@
     margin-top: 0.5rem;
     display: block;
   }
+
+  .login-input {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 1rem;
+    border: none;
+    margin-bottom: 1rem;
+    background: #f5f8fa;
+    font-size: 1rem;
+  }
