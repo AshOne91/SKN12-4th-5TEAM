@@ -105,15 +105,31 @@ function ChatbotPage() {
     setMessages([]); // 임시: 채팅별 메시지 분리 필요시 수정
   };
 
-  const handleSend = (text) => {
-    setMessages([...messages, { role: "user", text }]);
-    // 임시: 실제 챗봇 응답은 여기에 추가
-    setTimeout(() => {
-      setMessages(msgs => [
-        ...msgs,
-        { role: "bot", text: "헬스케어 챗봇의 답변입니다." }
-      ]);
-    }, 800);
+  const handleSend = async (text) => {
+    // 1. 사용자 메시지를 즉시 채팅창에 추가
+    const userMessage = { role: "user", text };
+    setMessages(prevMessages => [...prevMessages, userMessage]);
+
+    try {
+      // 2. 백엔드 API에 질문 전송 (엔드포인트는 예시입니다)
+      const res = await fetch("http://127.0.0.1:8000/emergency-support/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: text }),
+      });
+
+      if (!res.ok) {
+        throw new Error("서버 응답 오류");
+      }
+
+      const data = await res.json(); // 백엔드로부터 { "answer": "..." } 형태의 응답을 기대
+      const botMessage = { role: "bot", text: data.answer };
+      setMessages(prevMessages => [...prevMessages, botMessage]);
+    } catch (error) {
+      console.error("챗봇 응답을 가져오는 데 실패했습니다:", error);
+      const errorMessage = { role: "bot", text: "죄송합니다, 오류가 발생했습니다." };
+      setMessages(prevMessages => [...prevMessages, errorMessage]);
+    }
   };
 
   return (

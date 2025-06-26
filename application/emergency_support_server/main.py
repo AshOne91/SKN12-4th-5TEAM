@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 # from fastapi_base_server.application.emergency_support_server.routers import emergency_support
 from .routers import emergency_support
+from fastapi.middleware.cors import CORSMiddleware
 from template.base.template_context import TemplateContext
 from template.base.template_type import TemplateType
 from template.emergency_support.emergency_support_template_impl import EmergencySupportTemplateImpl
@@ -16,6 +17,19 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
+
+# React 앱의 주소(http://localhost:3000)를 허용해야 합니다.
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(emergency_support.router, prefix="/emergency-support", tags=["emergency-support"])
 

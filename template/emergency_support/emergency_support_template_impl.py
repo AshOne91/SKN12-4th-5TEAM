@@ -1,6 +1,6 @@
 from template.base.template.emergency_support_template import EmergencySupportTemplate
 from template.emergency_support.common.emergency_support_serialize import EmergencySupportAskRequest, EmergencySupportAskResponse
-# .\venv\Scripts\Activate.ps1
+# uvicorn application.emergency_support_server.main:app --reload --port 8000
 import os
 import asyncio
 from dotenv import load_dotenv
@@ -20,8 +20,8 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # 2. 임베딩 파일 및 데이터 경로 정의 (여기서 경로를 지정)
-INDEX_PATH = "resources/vectorDB/2wnsqo/QA_random_pair_part2_index1.index"
-CHUNK_PATH = "resources/vectorDB/2wnsqo/QA_random_pair_part2_chunks1.txt"
+INDEX_PATH = "resources\\vectorDB\\emergency_support_vectorDB\\QA_random_pair_part2_index1.index"
+CHUNK_PATH = "resources\\vectorDB\\emergency_support_vectorDB\\QA_random_pair_part2_chunks1.txt"
 
 class EmergencySupportTemplateImpl(EmergencySupportTemplate):
     def init(self, config):
