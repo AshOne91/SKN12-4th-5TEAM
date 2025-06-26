@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from application.chatbot_server.routers import account, chatbot, test
+from fastapi.middleware.cors import CORSMiddleware
 
 from template.base.template_context import TemplateContext
 from template.base.template_type import TemplateType
@@ -59,6 +60,19 @@ async def lifespan(app: FastAPI):
     # (필요시 종료 코드)
 
 app = FastAPI(lifespan=lifespan)
+
+# --- CORS 미들웨어 추가 ---
+# React 앱(http://localhost:3000)과 같은 다른 도메인에서의 요청을 허용합니다.
+origins = [
+    "http://localhost:3000",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(test.router, prefix="/test", tags=["test"])
 app.include_router(account.router, prefix="/account", tags=["account"])

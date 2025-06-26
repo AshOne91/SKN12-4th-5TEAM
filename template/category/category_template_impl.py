@@ -1,5 +1,12 @@
 from template.base.template.category_template import CategoryTemplate
 from template.category.common.category_serialize import CategoryAskRequest, CategoryAskResponse
+from service.lang_chain.category_classifer import Category_Classifier
+from dotenv import load_dotenv
+from service.http.http_client import HTTPClientPool
+import os
+
+load_dotenv()
+CATEGORY_MAPPING = os.getenv("CATEGORY_MAPPING")
 
 class CategoryTemplateImpl(CategoryTemplate):
     def init(self, config):
@@ -23,9 +30,12 @@ class CategoryTemplateImpl(CategoryTemplate):
         print("Category client deleted")
 
     async def on_category_ask_req(self, client_session, request: CategoryAskRequest) -> CategoryAskResponse:
-        # 카테고리 질의 처리
         question = request.question
-        # TODO: 실제 카테고리 분류 로직 구현
-        answer = f"카테고리 질의: {question}에 대한 응답입니다."
+        cc = Category_Classifier()
+        answer = cc.return_category(user_input=question)
+        # if answer != '':
+        #     http = HTTPClientPool()
+        #     http.post(url=CATEGORY_MAPPING[answer])
         response = CategoryAskResponse(answer=answer)
-        return response 
+
+        return response

@@ -155,3 +155,27 @@
 .send-btn:hover {
   background: #3a8dde;
 }
+
+.chat-bubble.bot.typing span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #909090;
+  margin: 0 2px;
+  animation: typing-blink 1.4s infinite both;
+}
+
+.chat-bubble.bot.typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.chat-bubble.bot.typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing-blink {
+  0% { opacity: 0.2; }
+  20% { opacity: 1; }
+  100% { opacity: 0.2; }
+}
