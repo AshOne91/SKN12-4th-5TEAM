@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 # rag_module.py에서 정의한 모든 함수들을 가져옵니다.
 # from service.lang_chain.lang_chain import * 선택
-from service.lang_chain.lang_chain import (
+from service.lang_chain.emergency_support_lang_chain import (
     load_embedding_model,
     load_faiss_index,
     load_chunks,
