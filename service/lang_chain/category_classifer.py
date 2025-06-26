@@ -15,7 +15,7 @@ import faiss
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-TEXT_PATH = r'C:\Users\Playdata\Desktop\SKN12-4th-5TEAM\resources\vectorDB\category_vectorDB'
+TEXT_PATH = os.getenv('CATEGORY_VECTORDB')
 EMBEDDING_PATH = TEXT_PATH
 CATEGORY_PATH = TEXT_PATH
 
@@ -65,15 +65,13 @@ class Category_Classifier:
             fewshot += f"예시 {i+1}:\n텍스트: \"{ex}\"\n카테고리: {cat}\n\n"
 
         prompt = f"""
-당신은 텍스트를 아래 6가지 카테고리 중 하나로만 분류해야 하는 전문가입니다.
+당신은 텍스트를 아래 4가지 카테고리 중 하나로만 분류해야 하는 전문가입니다.
 
 선택 가능한 카테고리:
-- medicine
-- treatment
-- assist_answer
-- assist_question
-- internal_answer
-- internal_question
+- emergency_support
+- internal_external
+- drug
+- clinic
 
 아래는 분류된 예시들입니다:
 {fewshot}

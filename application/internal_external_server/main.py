@@ -17,7 +17,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-app.include_router(internal_external.router, prefix="/internal-external", tags=["internal-external"])
+app.include_router(internal_external.router, prefix="/internal_external", tags=["internal-external"])
+# app.include_router(internal_external.router, prefix="/internal_external_server", tags=["internal-external"])
 
 @app.get("/")
 def root():
