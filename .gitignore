@@ -44,4 +44,12 @@ frontend/build/
 frontend/dist/
 
 # 기타
+<<<<<<< HEAD
 *.swp
+=======
+<<<<<<< HEAD
+*.swp
+=======
+*.swp
+>>>>>>> 65fbf735923dba4cdfe3b36923f3f98cc68efe79
+>>>>>>> origin/uiheon

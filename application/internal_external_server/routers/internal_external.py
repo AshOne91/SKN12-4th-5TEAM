@@ -12,4 +12,4 @@ async def internal_external_ask(request: InternalExternalAskRequest):
     internal_external_template = TemplateContext.get_template(TemplateType.INTERNAL_EXTERNAL)
     if internal_external_template is None:
         raise RuntimeError("InternalExternalTemplateImpl is not registered in TemplateContext")
-    return internal_external_template.on_internal_external_ask_req(None, request) 
+    return await internal_external_template.on_internal_external_ask_req(None, request) 
