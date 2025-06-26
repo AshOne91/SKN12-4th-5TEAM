@@ -1,31 +1,47 @@
-from template.base.template.clinic_template import ClinicTemplate
+
+from template.base.template.clicnic_template import ClinicTemplate
 from template.clinic.common.clinic_serialize import ClinicAskRequest, ClinicAskResponse
+from sentence_transformers import SentenceTransformer
+import os
+import faiss
+import json
+import numpy as np
 
 class ClinicTemplateImpl(ClinicTemplate):
     def init(self, config):
-        """진료 템플릿 초기화"""
         print("Clinic template initialized")
-        
-    def on_load_data(self, config):
-        """진료 데이터 로딩"""
-        print("Clinic data loaded")
-        
-    def on_client_create(self, db_client, client_session):
-        """클라이언트 생성 시 콜백"""
-        print("Clinic client created")
-        
-    def on_client_update(self, db_client, client_session):
-        """클라이언트 업데이트 시 콜백"""
-        print("Clinic client updated")
-        
-    def on_client_delete(self, db_client, user_id):
-        """클라이언트 삭제 시 콜백"""
-        print("Clinic client deleted")
+
+        # 경로 설정
+        base_path = "resources/vectordb/treatment/RAG_Output/faiss_medical"
+        self.index = faiss.read_index(os.path.join(base_path, "faiss_index", "index.faiss"))
+        with open(os.path.join(base_path, "doc_ids.json"), "r", encoding="utf-8") as f:
+            self.doc_ids = json.load(f)
+        self.embedding_model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+        self.processed_docs_path = "resources/vectordb/treatment/RAG_Output/processed_docs"
 
     async def on_clinic_ask_req(self, client_session, request: ClinicAskRequest) -> ClinicAskResponse:
-        # 진료 질의 처리
         question = request.question
-        # TODO: 실제 진료 관련 로직 구현
-        answer = f"진료 질의: {question}에 대한 응답입니다."
-        response = ClinicAskResponse(answer=answer)
-        return response 
+
+        # 1. 질문 임베딩
+        q_vector = self.embedding_model.encode(question)
+        q_vector = np.array([q_vector]).astype("float32")
+
+        # 2. FAISS 검색 (top 3)
+        D, I = self.index.search(q_vector, k=3)
+
+        # 3. 검색된 문서 chunk 로드
+        retrieved_texts = []
+        for idx in I[0]:
+            if idx < len(self.doc_ids):
+                doc_filename = self.doc_ids[idx]
+                if not doc_filename.endswith(".txt"):
+                    doc_filename += ".txt"
+                doc_path = os.path.join(self.processed_docs_path, doc_filename)
+                if os.path.exists(doc_path):
+                    with open(doc_path, "r", encoding="utf-8") as f:
+                        retrieved_texts.append(f.read())
+
+        # 4. context 구성
+        context = "\n\n".join(retrieved_texts)
+        answer = f"{context}"
+        return ClinicAskResponse(answer=answer)
