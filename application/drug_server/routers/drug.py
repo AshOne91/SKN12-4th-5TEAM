@@ -12,4 +12,4 @@ async def drug_ask(request: DrugAskRequest):
     drug_template = TemplateContext.get_template(TemplateType.DRUG)
     if drug_template is None:
         raise RuntimeError("DrugTemplateImpl is not registered in TemplateContext")
-    return drug_template.on_drug_ask_req(None, request) 
+    return await drug_template.on_drug_ask_req(None, request) 
