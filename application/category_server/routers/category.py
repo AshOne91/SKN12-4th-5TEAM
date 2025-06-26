@@ -12,4 +12,4 @@ async def category_ask(request: CategoryAskRequest):
     category_template = TemplateContext.get_template(TemplateType.CATEGORY)
     if category_template is None:
         raise RuntimeError("CategoryTemplateImpl is not registered in TemplateContext")
-    return category_template.on_category_ask_req(None, request) 
+    return await category_template.on_category_ask_req(None, request)

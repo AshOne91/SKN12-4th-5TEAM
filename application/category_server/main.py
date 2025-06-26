@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from fastapi_base_server.application.category_server.routers import category
+from application.category_server.routers import category
 
 from template.base.template_context import TemplateContext
 from template.base.template_type import TemplateType
