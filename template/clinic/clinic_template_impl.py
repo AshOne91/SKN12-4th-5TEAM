@@ -1,4 +1,3 @@
-
 from template.base.template.clicnic_template import ClinicTemplate
 from template.clinic.common.clinic_serialize import ClinicAskRequest, ClinicAskResponse
 from sentence_transformers import SentenceTransformer
@@ -6,18 +5,25 @@ import os
 import faiss
 import json
 import numpy as np
+from dotenv import load_dotenv
 
+load_dotenv()
 class ClinicTemplateImpl(ClinicTemplate):
     def init(self, config):
         print("Clinic template initialized")
 
-        # 경로 설정
-        base_path = "resources/vectordb/treatment/RAG_Output/faiss_medical"
+        # 경로 설정 (환경변수에서 불러오기)
+        base_path = os.getenv('CLINIC_VECTORDB_BASE')
+        processed_docs_path = os.getenv('CLINIC_VECTORDB_DOCS')
+        if base_path is None:
+            raise ValueError('CLINIC_VECTORDB_BASE_PATH 환경변수가 설정되어 있지 않습니다.')
+        if processed_docs_path is None:
+            raise ValueError('CLINIC_PROCESSED_DOCS_PATH 환경변수가 설정되어 있지 않습니다.')
         self.index = faiss.read_index(os.path.join(base_path, "faiss_index", "index.faiss"))
         with open(os.path.join(base_path, "doc_ids.json"), "r", encoding="utf-8") as f:
             self.doc_ids = json.load(f)
         self.embedding_model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-        self.processed_docs_path = "resources/vectordb/treatment/RAG_Output/processed_docs"
+        self.processed_docs_path = processed_docs_path
 
     async def on_clinic_ask_req(self, client_session, request: ClinicAskRequest) -> ClinicAskResponse:
         question = request.question

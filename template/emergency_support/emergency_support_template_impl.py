@@ -18,10 +18,12 @@ from service.lang_chain.emergency_support_lang_chain import (
 # 1. 환경 변수 로드
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+INDEX_PATH = os.getenv("EMERGENCY_SUPPORT_VECTORDB_INDEX")
+CHUNK_PATH = os.getenv("EMERGENCY_SUPPORT_VECTORDB_TXT")
 
 # 2. 임베딩 파일 및 데이터 경로 정의 (여기서 경로를 지정)
-INDEX_PATH = "resources\\vectorDB\\emergency_support_vectorDB\\QA_random_pair_part2_index1.index"
-CHUNK_PATH = "resources\\vectorDB\\emergency_support_vectorDB\\QA_random_pair_part2_chunks1.txt"
+# INDEX_PATH = "resources\\vectorDB\\emergency_support_vectorDB\\QA_random_pair_part2_index1.index"
+# CHUNK_PATH = "resources\\vectorDB\\emergency_support_vectorDB\\QA_random_pair_part2_chunks1.txt"
 
 class EmergencySupportTemplateImpl(EmergencySupportTemplate):
     def init(self, config):

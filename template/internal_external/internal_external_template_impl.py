@@ -15,9 +15,12 @@ from service.lang_chain.internal_external_lang_chain import (
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
-INDEX_PATH = "resources/vectorDB/uiheon/QA_random_pair_part1_index1.index"
-CHUNK_PATH = "resources/vectorDB/uiheon/QA_random_pair_part1_chunks1.txt"
+INDEX_PATH = os.getenv("INTERNAL_EXTERNAL_VECTORDB_INDEX")
+CHUNK_PATH = os.getenv("INTERNAL_EXTERNAL_VECTORDB_TXT")
+print(f"Using INDEX_PATH: {INDEX_PATH}")
+print(f"Using CHUNK_PATH: {CHUNK_PATH}")
+# INDEX_PATH = "resources/vectorDB/uiheon/QA_random_pair_part1_index1.index"
+# CHUNK_PATH = "resources/vectorDB/uiheon/QA_random_pair_part1_chunks1.txt"
 
 class InternalExternalTemplateImpl:
     def __init__(self):

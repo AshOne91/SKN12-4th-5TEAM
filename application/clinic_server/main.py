@@ -16,6 +16,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(clinic.router, prefix="/clinic", tags=["clinic"])
+# app.include_router(clinic.router, prefix="/clinic_server", tags=["clinic"])
 
 @app.get("/")
 def root():

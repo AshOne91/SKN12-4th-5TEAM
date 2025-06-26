@@ -6,13 +6,25 @@ from service.http.http_client import HTTPClientPool
 import os
 
 load_dotenv()
-CATEGORY_MAPPING = os.getenv("CATEGORY_MAPPING")
+CATEGORY_URLS = {
+    "emergency_support": os.getenv("EMERGENCY_SUPPORT_URL"),
+    "internal_external": os.getenv("INTERNAL_EXTERNAL_URL"),
+    "drug": os.getenv("DRUG_URL"),
+    "clinic": os.getenv("CLINIC_URL"),
+}
 
 class CategoryTemplateImpl(CategoryTemplate):
-    def init(self, config):
-        """카테고리 템플릿 초기화"""
+    def __init__(self): # Changed from init to __init__
+        """카테고리 템플릿 초기화 및 공유 리소스 로드"""
+        super().__init__() # Call parent constructor if CategoryTemplate has one
+        self.category_classifier = Category_Classifier() # Category_Classifier 인스턴스를 한 번만 생성
+        self.http_client_pool = HTTPClientPool() # HTTPClientPool 인스턴스를 한 번만 생성
         print("Category template initialized")
         
+    # If the framework still calls an 'init' method, it can be kept as a no-op or for logging
+    def init(self, config):
+        print("Category template init hook called (attributes already initialized in __init__)")
+
     def on_load_data(self, config):
         """카테고리 데이터 로딩"""
         print("Category data loaded")
@@ -31,11 +43,25 @@ class CategoryTemplateImpl(CategoryTemplate):
 
     async def on_category_ask_req(self, client_session, request: CategoryAskRequest) -> CategoryAskResponse:
         question = request.question
-        cc = Category_Classifier()
-        answer = cc.return_category(user_input=question)
-        # if answer != '':
-        #     http = HTTPClientPool()
-        #     http.post(url=CATEGORY_MAPPING[answer])
-        response = CategoryAskResponse(answer=answer)
-
+        category = self.category_classifier.return_category(user_input=question)
+        print(f"Classified category: '{category}'")  # 분류된 카테고리 로그
+        url = CATEGORY_URLS.get(category)
+        print(f"Looked up URL: '{url}' for category '{category}'") # 찾은 URL 로그
+        if url:
+            # HTTP 요청에 대한 오류 처리 추가
+            try:
+                resp = await self.http_client_pool.post(url=url, json={"question": question}) # 미리 생성된 인스턴스 사용
+                resp.raise_for_status() # 4xx/5xx 상태 코드에 대해 예외 발생
+                data = resp.json()
+            except Exception as e:
+                print(f"Error calling external service {url}: {e}")
+                data = {"answer": f"죄송합니다. 서비스 연결에 문제가 발생했습니다. ({e})"} # 사용자에게 친화적인 오류 메시지 반환
+            response = CategoryAskResponse(answer=data.get("answer", ""))
+        else:
+            print(f"No matching URL found for category '{category}'. Returning empty answer.") # URL을 찾지 못했을 때 로그
+            response = CategoryAskResponse(answer="")
         return response
+
+        # http://127.0.0.1:8000/internal_external_server/ask
+        # http://127.0.0.1:8000/drug_server/ask 
+        # http://127.0.0.1:8000/clinic_server/ask

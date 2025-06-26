@@ -106,7 +106,7 @@ class Vector_store:
         )
         return prompt | self.llm | self.parser
 
-    def rag_answer(self, question: str, top_k: int = 3):
+    async def rag_answer(self, question: str, top_k: int = 3):
         """
         질문에 대한 관련 문서를 검색하여 LLM으로 응답 생성
 
@@ -121,4 +121,4 @@ class Vector_store:
         _, indices = self.index.search(np.array(embedding).astype("float32"), top_k)
         top_chunks = [self.chunks[i] for i in indices[0]]
         context = "\n".join(top_chunks)
-        return self.rag_chain.invoke({"context": context, "question": question})
+        return await self.rag_chain.ainvoke({"context": context, "question": question})

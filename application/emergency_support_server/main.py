@@ -33,6 +33,7 @@ app.add_middleware(
 )
 
 app.include_router(emergency_support.router, prefix="/emergency-support", tags=["emergency-support"])
+# app.include_router(emergency_support.router, prefix="/emergency-support_server", tags=["emergency-support"])
 
 @app.get("/")
 def root():

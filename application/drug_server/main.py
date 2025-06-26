@@ -7,17 +7,16 @@ from template.drug.drug_template_impl import DrugTemplateImpl
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    drog_template_instance = DrugTemplateImpl()
-    drog_template_instance.init(config=None)
-    TemplateContext.add_template(TemplateType.EMERGENCY_SUPPORT, drog_template_instance)
+    drug_template_instance = DrugTemplateImpl()
+    drug_template_instance.init(config=None)
+    # TemplateType을 DRUG로 정확하게 지정합니다.
+    TemplateContext.add_template(TemplateType.DRUG, drug_template_instance)
     yield    
 
 app = FastAPI(lifespan=lifespan)
 
-# 등록
-TemplateContext.add_template(TemplateType.DRUG, DrugTemplateImpl())
-
 app.include_router(drug.router, prefix="/drug", tags=["drug"])
+# app.include_router(drug.router, prefix="/drug_server", tags=["drug"])
 
 @app.get("/")
 def root():
