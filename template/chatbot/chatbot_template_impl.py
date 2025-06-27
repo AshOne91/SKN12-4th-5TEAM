@@ -112,7 +112,7 @@ class ChatbotTemplateImpl(ChatbotTemplate):
         try:
             category_req = CategoryAskRequest(question=message)
             resp = await http_client.post(
-                f"{category_server_url}/ask",
+                f"{category_server_url}/category/ask",
                 json=category_req.model_dump()
             )
             resp.raise_for_status()
