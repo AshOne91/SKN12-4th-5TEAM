@@ -4,6 +4,7 @@ from service.lang_chain.category_classifer import Category_Classifier
 from dotenv import load_dotenv
 from service.http.http_client import HTTPClientPool
 import os
+import asyncio
 
 load_dotenv()
 CATEGORY_URLS = {
@@ -50,13 +51,22 @@ class CategoryTemplateImpl(CategoryTemplate):
         if url:
             # HTTP 요청에 대한 오류 처리 추가
             try:
-                resp = await self.http_client_pool.post(url=url, json={"question": question}) # 미리 생성된 인스턴스 사용
-                resp.raise_for_status() # 4xx/5xx 상태 코드에 대해 예외 발생
-                data = resp.json()
+                category_req = CategoryAskRequest(question=question)
+                resp = await self.http_client_pool.post(
+                    f"{url}/category/ask",
+                    json=category_req.model_dump()
+                )
+                resp.raise_for_status()
+                # 안전하게 처리
+                if asyncio.iscoroutinefunction(resp.json):
+                    category_resp_json = await resp.json()
+                else:
+                    category_resp_json = resp.json()
+                category_answer = category_resp_json.get("answer", "")
             except Exception as e:
                 print(f"Error calling external service {url}: {e}")
-                data = {"answer": f"죄송합니다. 서비스 연결에 문제가 발생했습니다. ({e})"} # 사용자에게 친화적인 오류 메시지 반환
-            response = CategoryAskResponse(answer=data.get("answer", ""))
+                category_answer = f"죄송합니다. 서비스 연결에 문제가 발생했습니다. ({e})"
+            response = CategoryAskResponse(answer=category_answer)
         else:
             print(f"No matching URL found for category '{category}'. Returning empty answer.") # URL을 찾지 못했을 때 로그
             response = CategoryAskResponse(answer="")
