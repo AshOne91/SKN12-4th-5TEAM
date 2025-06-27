@@ -5,6 +5,9 @@ from .routers import clinic
 from template.base.template_context import TemplateContext
 from template.base.template_type import TemplateType
 from template.clinic.clinic_template_impl import ClinicTemplateImpl
+from dotenv import load_dotenv
+
+load_dotenv()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
