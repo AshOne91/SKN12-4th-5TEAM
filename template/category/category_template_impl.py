@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from service.http.http_client import HTTPClientPool
 import os
 import asyncio
+import inspect
 
 load_dotenv()
 CATEGORY_URLS = {
@@ -57,8 +58,7 @@ class CategoryTemplateImpl(CategoryTemplate):
                     json=category_req.model_dump()
                 )
                 resp.raise_for_status()
-                # 안전하게 처리
-                if asyncio.iscoroutinefunction(resp.json):
+                if inspect.iscoroutinefunction(resp.json):
                     category_resp_json = await resp.json()
                 else:
                     category_resp_json = resp.json()
