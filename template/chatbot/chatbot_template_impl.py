@@ -116,7 +116,10 @@ class ChatbotTemplateImpl(ChatbotTemplate):
                 json=category_req.model_dump()
             )
             resp.raise_for_status()
-            category_resp_json = await resp.json()
+            try:
+                category_resp_json = await resp.json()
+            except TypeError:
+                category_resp_json = resp.json()
             category_answer = category_resp_json.get("answer", "")
         except Exception as e:
             print(f"카테고리 서버 질의 실패: {e}")
