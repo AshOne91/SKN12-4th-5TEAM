@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
+import config from './config';
 
 function Login() {
   const navigate = useNavigate();
@@ -15,13 +16,13 @@ function Login() {
     e.preventDefault();
     setError("");
     try {
-      const res = await fetch("http://localhost:8000/account/login", {
+      const res = await fetch(`${config.ACCOUNT_API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
           accessToken: "",
-          sequence: 0
+          sequence: config.SEQUENCE
         }),
       });
       const data = await res.json();

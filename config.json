@@ -29,6 +29,19 @@
     "port": 6379,
     "sessionExpireTime": 3600
   },
+  "serverConfig": {
+    "host": "0.0.0.0",
+    "port": 8000,
+    "debug": true,
+    "reload": true
+  },
+  "frontendConfig": {
+    "apiBaseUrl": "http://localhost:8000",
+    "chatbotApiUrl": "http://localhost:8000/chatbot",
+    "accountApiUrl": "http://localhost:8000/account",
+    "sequence": 0,
+    "defaultTimeout": 30000
+  },
   "categoryServerUrl": "http://localhost:8001",
   "eventConfig": {
     "enabled": true,

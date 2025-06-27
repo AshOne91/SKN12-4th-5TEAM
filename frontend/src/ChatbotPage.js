@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./ChatbotPage.css";
 import { FaStethoscope, FaHeartbeat } from "react-icons/fa";
+import config from './config';
 
 // --- Sidebar 컴포넌트 ---
 // 역할: 채팅방 목록 표시 및 새 채팅 시작
@@ -106,8 +107,8 @@ function ChatbotPage() {
   const [isBotTyping, setIsBotTyping] = useState(false); // 봇 응답 대기 상태
   const [error, setError] = useState(null); // 에러 상태
 
-  const API_BASE_URL = "http://localhost:8000/chatbot";
-  const SEQUENCE = 0;
+  const API_BASE_URL = config.CHATBOT_API_URL;
+  const SEQUENCE = config.SEQUENCE;
   const getAccessToken = () => localStorage.getItem("accessToken") || "";
 
   // 1. 컴포넌트가 처음 렌더링될 때 채팅방 목록을 가져옵니다.

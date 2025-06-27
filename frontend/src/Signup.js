@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
+import config from './config';
 
 function Signup() {
   const navigate = useNavigate();
@@ -22,13 +23,13 @@ function Signup() {
     setError("");
     setSuccess(false);
     try {
-      const res = await fetch("http://localhost:8000/account/signup", {
+      const res = await fetch(`${config.ACCOUNT_API_URL}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
           accessToken: "",
-          sequence: 0
+          sequence: config.SEQUENCE
         }),
       });
       const data = await res.json();
