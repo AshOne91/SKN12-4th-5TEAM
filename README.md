@@ -1,19 +1,5 @@
 # FastAPI Base Server
 
-C# 기반 서버 구조를 FastAPI로 변환한 프로젝트입니다.
-
-## 구조
-
-### C# vs FastAPI 비교
-
-| C# | FastAPI |
-|---|---|
-| `TemplateStartup.Run()` | `lifespan` 이벤트 핸들러 |
-| `ServerParameter` | `ServerParameter` 클래스 |
-| `AppConfig` | `AppConfig` 클래스 |
-| `GameBaseTemplateContext` | `TemplateContext` |
-| `ETemplateType` | `TemplateType` Enum |
-
 ## 주요 기능
 
 ### 1. 앱 시작 시 초기화
