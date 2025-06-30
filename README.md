@@ -1,4 +1,67 @@
-# FastAPI Base Server
+# SKN12-4th-5TEAM
+## 프로젝트 : FastAPI 기반 LLM 연동 의료 서비스 서버
+
+---
+
+## 팀 소개
+### 팀 명 : 윈도우즈
+## 팀 멤버
+
+| <img src="./assets/권성호.png" width="700"/> | <img src="./assets/남의헌.png" width="700"/> | <img src="./assets/손현성.png" width="700"/> | <img src="./assets/이준배.jpg" width="700"/> | <img src="./assets/이준석.png" width="700"/> |
+|:--:|:--:|:--:|:--:|:--:|
+| **권성호** | **남의헌** | **손현성** | **이준배** | **이준석** |
+
+---
+
+## 프로젝트 목적
+
+#### 의료 관련 LLM 및 다양한 도메인(카테고리, 약품, 병원, 응급지원 등) 지식을 연동한 FastAPI 기반 웹 서버 개발  
+#### 템플릿 시스템과 서비스 초기화 구조를 통해 확장성과 유지보수성을 높인 의료 QA/상담 챗봇 백엔드 구현
+
+---
+
+## 산출물
+
+- [요구사항 정의서](./산출물/요구사항%20정의서.hwp)
+- [화면설계서](./산출물/화면%20설계서.pdf)
+- [테스트 계획 및 결과 보고서](./산출물/테스트계획%20및%20결과보고서.pdf)
+- [시스템 구성도](./산출물/5조%20시스템%20아키텍처%20및%20구성도.pdf)
+
+---
+
+## 기술 스택
+
+**백엔드**  
+<img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white"/> <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white"/> <img src="https://img.shields.io/badge/uvicorn-000000?style=for-the-badge&logo=uvicorn&logoColor=white"/>
+
+**데이터/캐시/메시지큐**  
+<img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white"/> <img src="https://img.shields.io/badge/RabbitMQ-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white"/> <img src="https://img.shields.io/badge/Firestore-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white"/>
+
+**LLM & RAG**  
+<img src="https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white"/> <img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white"/>
+
+**프론트엔드**  
+<img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=white"/>
+
+**클라우드/인프라**  
+<img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white"/>
+
+**개발 환경**  
+<img src="https://img.shields.io/badge/VS Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white"/>
+<img src="https://img.shields.io/badge/Windows 11-0078D6?style=for-the-badge&logo=windows11&logoColor=white"/>
+
+---
+
+## 시스템 구성도
+
+![시스템 아키텍처](./assets/drawio.png)
+
+- **FastAPI 서버**: 각 도메인별(카테고리, 약품, 병원, 응급지원 등) 라우터 및 템플릿 구조로 설계
+- **서비스 레이어**: DB, 캐시, 이벤트, 메시지큐, 빌링 등 서비스 모듈화
+- **LLM 연동**: LangChain, OpenAI 등 다양한 LLM 및 임베딩/검색 연동
+- **프론트엔드**: React 기반 웹앱
+
+---
 
 ## 주요 기능
 
@@ -17,6 +80,8 @@
 - 환경별 설정 파일 (`config.json`, `config_debug.json`)
 - JSON 기반 설정 로딩
 - 기본값 폴백 지원
+
+---
 
 ## 설치 및 실행
 
@@ -43,11 +108,15 @@ python application/chatbot_server/main.py
 uvicorn application.chatbot_server.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
+---
+
 ## API 엔드포인트
 
 - `GET /`: 서버 상태 확인
 - `GET /health`: 헬스 체크
 - `GET /docs`: Swagger UI (FastAPI 자동 생성)
+
+---
 
 ## 템플릿 추가 방법
 
@@ -56,6 +125,8 @@ uvicorn application.chatbot_server.main:app --host 0.0.0.0 --port 8000 --reload
 3. `BaseTemplate` 상속하여 구현
 4. `main.py`의 `TemplateStartup.run()`에서 템플릿 등록
 
+---
+
 ## 서비스 구현
 
 현재 주석 처리된 서비스들을 실제 구현하려면:
@@ -63,6 +134,8 @@ uvicorn application.chatbot_server.main:app --host 0.0.0.0 --port 8000 --reload
 1. `service/` 디렉토리에 각 서비스 모듈 생성
 2. `main.py`에서 주석 해제
 3. 해당 서비스의 초기화 로직 구현
+
+---
 
 ## 설정 파일 구조
 
@@ -97,4 +170,16 @@ uvicorn application.chatbot_server.main:app --host 0.0.0.0 --port 8000 --reload
     "env": "development"
   }
 }
-``` 
+```
+
+---
+
+## 팀원 한줄 소감 ✨
+
+| 이름 | 소감 |
+|------|------|
+| **권성호** | 믿음과 사랑을 가지고 프로젝트에 임했습니다. 모두들 성공하십쇼. |
+| **남의헌** | '팀' 프로젝트를 잘 마무리 할 수 있게 협력한 팀원들에게 감사한 마음을 전합니다. 다들 고생 많으셨습니다. |
+| **이준배** | 여러가지 데이터로 시작하여 모두 힘들 합쳐 하나의 프로그램을 만들었다는게 뿌듯합니다.<br>다들 고생 많으셨습니다. |
+| **이준석** | 많이 부족했는데, 다들 많이 신경써주셔서 성공적으로 끝낼 수 있었습니다. 감사합니다. |
+| **손현성** | 이번 프로젝트로 협업하는 과정에서의 어려움을 경험해본 것 같아 좋은 경험이 되었고,<br>만족스러운 결과물이 나온것 같아 팀원들에게 감사합니다. 고생하셨습니다. |
